@@ -29,7 +29,6 @@ public class AutoFillAspect {
 
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
     public void autoFillPointCut(){
-
     }
 
     /**
