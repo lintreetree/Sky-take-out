@@ -28,6 +28,8 @@ public class Employee implements Serializable {
 
     private String sex;
 
+    private String address;
+
     private String idNumber;
 
     private Integer status;
