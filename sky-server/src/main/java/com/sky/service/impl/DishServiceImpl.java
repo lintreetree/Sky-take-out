@@ -48,12 +48,13 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 新增菜品和对应的口味
+     *
      * @param dishDTO
      */
     @Transactional
-    public void saveWithFlavor(DishDTO dishDTO){
+    public void saveWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
-        BeanUtils.copyProperties(dishDTO,dish);
+        BeanUtils.copyProperties(dishDTO, dish);
 
         //向菜品表插入1条数据
         dishMapper.insert(dish);
@@ -62,8 +63,8 @@ public class DishServiceImpl implements DishService {
         Long dishId = dish.getId();
 
         //向口味表插入N条数据
-        List<DishFlavor> flavors= dishDTO.getFlavors();
-        if(flavors != null && flavors.size() > 0){
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0) {
             flavors.forEach(dishFlavor -> {
                 dishFlavor.setDishId(dishId);
             });
@@ -77,15 +78,16 @@ public class DishServiceImpl implements DishService {
      * @param dishPageQueryDTO
      * @return
      */
-    public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO){
-        PageHelper.startPage(dishPageQueryDTO.getPage(),dishPageQueryDTO.getPageSize());
+    public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
+        PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
         Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
-        return new PageResult(page.getTotal(),page.getResult());
+        return new PageResult(page.getTotal(), page.getResult());
     }
 
 
     /**
      * 菜品批量删除
+     *
      * @param ids
      */
     @Override
@@ -94,7 +96,7 @@ public class DishServiceImpl implements DishService {
         //判断当前菜品是否能删除---是否存在起售中的菜品
         for (Long id : ids) {
             Dish dish = dishMapper.getById(id);
-            if(dish.getStatus() == StatusConstant.ENABLE){
+            if (dish.getStatus() == StatusConstant.ENABLE) {
                 //当前菜品处于起售中状态，不能删除
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
@@ -102,7 +104,7 @@ public class DishServiceImpl implements DishService {
 
         //判断当前菜品是否能删除---当前菜品是否被套餐关联
         List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
-        if(setmealIds != null && setmealIds.size() > 0){
+        if (setmealIds != null && setmealIds.size() > 0) {
             //当前菜品被套餐关联，不能删除
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
@@ -127,6 +129,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据id查询菜品和对应的口味数据
+     *
      * @param id
      * @return
      */
@@ -150,6 +153,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据id修改菜品基本信息和口味数据
+     *
      * @param dishDTO
      */
     @Override
@@ -166,7 +170,7 @@ public class DishServiceImpl implements DishService {
 
         //重新插入口味数据
         List<DishFlavor> flavors = dishDTO.getFlavors();
-        if(flavors != null && flavors.size() > 0){
+        if (flavors != null && flavors.size() > 0) {
             flavors.forEach(dishFlavor -> {
                 dishFlavor.setDishId(dishDTO.getId());
             });
@@ -178,6 +182,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 菜品启用禁用
+     *
      * @param status
      * @param id
      */
@@ -189,7 +194,7 @@ public class DishServiceImpl implements DishService {
                 .build();
         dishMapper.update(dish);
 
-        if(status == StatusConstant.DISABLE) {
+        if (status == StatusConstant.DISABLE) {
             //如果停售，需要讲包含这道菜的套餐也停售
             List<Long> dishIds = new ArrayList<>();
             dishIds.add(id);
@@ -210,6 +215,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据categoryId查询dish
+     *
      * @param categoryId
      * @return
      */

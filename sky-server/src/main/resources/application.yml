@@ -13,6 +13,11 @@ spring:
       username: root
       password: Lyl@2020
 
+  redis:
+    host: localhost
+    port: 6379
+    password:
+
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
